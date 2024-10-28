@@ -35,7 +35,7 @@ class ModelsFactory(object):
             and os.listdir(custom_model_path) != []
             and "wds.pt" in os.listdir(custom_model_path)
         ):
-            from .WeightLoading import load_model_or_weights
+            from vision.core.utils.modelutils import load_model_or_weights
 
             model_or_weight, flag = load_model_or_weights(
                 os.path.join(custom_model_path, "wds.pt")
@@ -46,7 +46,7 @@ class ModelsFactory(object):
                 weight = model_or_weight
         if model == None:
             if platform == "huggingface":
-                from .Huggingface import get_hf_model, get_hf_tokenizer
+                from .huggingface import get_hf_model, get_hf_tokenizer
 
                 model = get_hf_model(
                     name, num_classes, kwargs["CACHE_PATH"], task=kwargs["TASK"]
@@ -60,10 +60,7 @@ class ModelsFactory(object):
                         task=kwargs["TASK"],
                     )
             elif platform == "timm":
-                from .custom_timm_models import register_custom_timm_models
-
-                register_custom_timm_models()
-                from .Timm import get_timm_model
+                from .timm import get_timm_model
 
                 model = get_timm_model(name, num_classes, pretrained)
             else:
@@ -141,6 +138,22 @@ class ModelsFactory(object):
                         model = get_mobilenet_bireal(num_classes, num_fp=num_fp)
                     else:
                         raise Exception("unknown model {}".format(name))
+                elif platform == "mmdet":
+                    from .mmdet import get_mmdet_model
+
+                    model = get_mmdet_model(name, kwargs)
+                elif platform == "mmseg":
+                    from .mmseg import get_mmseg_model
+
+                    model = get_mmseg_model(name, kwargs)
+                elif platform == "mmpose":
+                    from .mmpose import get_mmpose_model
+
+                    model = get_mmpose_model(name, kwargs)
+                elif platform == "mmyolo":
+                    from .mmyolo import get_mmyolo_model
+
+                    model = get_mmyolo_model(name, kwargs)
                 else:
                     raise Exception(
                         "unknown model {} or Platform ".format(name, platform)
