@@ -63,6 +63,10 @@ class ModelsFactory(object):
                 from .timm import get_timm_model
 
                 model = get_timm_model(name, num_classes, pretrained)
+            elif platform == "ultralytics":
+                from .ultralytics import get_ultralytics_model
+
+                model = get_ultralytics_model(name, num_classes, pretrained)
             else:
                 if name in [
                     "resnet18",
