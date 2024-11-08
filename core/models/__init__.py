@@ -2,7 +2,7 @@ import torch
 import os
 
 
-class ModelsFactory(object):
+class ModelsFactory:
     @staticmethod
     def create_model(
         name,
@@ -26,7 +26,7 @@ class ModelsFactory(object):
         torch.hub.set_dir(cache_dir)
         weight = None
         model = None
-        if kwargs["IS_TEACHER"] == True:
+        if kwargs["IS_TEACHER"]:
             custom_model_path = kwargs.get("CUSTOM_TEACHER_MODEL_PATH")
         else:
             custom_model_path = kwargs.get("CUSTOM_MODEL_PATH", "")
@@ -44,7 +44,7 @@ class ModelsFactory(object):
                 model = model_or_weight
             else:
                 weight = model_or_weight
-        if model == None:
+        if model is None:
             if platform == "huggingface":
                 from .huggingface import get_hf_model, get_hf_tokenizer
 
@@ -66,7 +66,7 @@ class ModelsFactory(object):
             elif platform == "ultralytics":
                 from .ultralytics import get_ultralytics_model
 
-                model = get_ultralytics_model(name, num_classes, pretrained)
+                model = get_ultralytics_model(name, num_classes, custom_model_path)
             else:
                 if name in [
                     "resnet18",
@@ -160,9 +160,9 @@ class ModelsFactory(object):
                     model = get_mmyolo_model(name, kwargs)
                 else:
                     raise Exception(
-                        "unknown model {} or Platform ".format(name, platform)
+                        "unknown model {} or Platform {} ".format(name, platform)
                     )
-            if weight != None:
+            if weight is not None:
                 if "state_dict" in weight.keys():
                     weight = weight["state_dict"]
                     model.load_state_dict(weight)
