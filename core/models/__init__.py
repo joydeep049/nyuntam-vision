@@ -21,6 +21,7 @@ class ModelsFactory:
         Return:
             model object
         """
+        weight_loading_exception = ["huggingface", "ultralytics"]
         cache_dir = os.path.join(kwargs["CACHE_PATH"], "Torch")
         os.makedirs(os.path.join(cache_dir, "Torch"), exist_ok=True)
         torch.hub.set_dir(cache_dir)
@@ -162,7 +163,7 @@ class ModelsFactory:
                     raise Exception(
                         "unknown model {} or Platform {} ".format(name, platform)
                     )
-            if weight is not None:
+            if platform not in weight_loading_exception and weight is not None:
                 if "state_dict" in weight.keys():
                     weight = weight["state_dict"]
                     model.load_state_dict(weight)
